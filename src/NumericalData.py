@@ -13,22 +13,22 @@ class NumericalInstance:
         self.key = int(key)
         self.value = int(value)
 
-    def __lt__(self, other):
+    def __lt__(self, other) -> bool:
         return self.value < other.value
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         return self.value == other.value
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.key}"
     
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"Key: {self.key}, Value: {self.value}"
-    def to_json(self):
+    def to_json(self) -> str:
         return json.dumps({"key":self.key,"value":self.value})
 
 class NumericalInstanceReverseOrder(NumericalInstance):
-    def __lt__(self, other):
+    def __lt__(self, other) -> bool:
         return self.value > other.value
 
 
@@ -39,19 +39,19 @@ class NumericalStructure:
         if not file_path is None:
             self.data = self.process_data(file_path)
 
-    def process_data(self,file:UploadFile=None):
+    def process_data(self,file:UploadFile=None) -> None:
         if file.size < chunk_file_size:
             self.process_entire_file(-1,file)
         else:
             self.process_data_per_chunk(file)
     
-    def get_Data(self,n_values:int = 3,file:UploadFile=None):
+    def get_Data(self,n_values:int = 3,file:UploadFile=None) -> list[NumericalInstance]:
         if not self.global_instance and file is not None:
             return self.process_entire_file(n_values,file)
         else:
             return self.get_data_from_files(n_values)
 
-    def process_entire_file(self,n_values:int,file:UploadFile=None):
+    def process_entire_file(self,n_values:int,file:UploadFile=None) -> list[NumericalInstance]:
         heap = []
         i = 0
         with file.file as f:
@@ -60,7 +60,7 @@ class NumericalStructure:
                 i += 1        
         return heapq.nlargest(n_values, heap) if n_values != -1 else heap
 
-    def process_data_per_chunk(self:int,file:UploadFile=None):
+    def process_data_per_chunk(self:int,file:UploadFile=None) -> None:
         with file.file as f:
             for line in io.TextIOWrapper(f, encoding='utf-8'):
                 hashed_key = line.split('_')[0]  // 10000
@@ -77,7 +77,7 @@ class NumericalStructure:
                         f.write(f'{data.key}_{data.value}\n')
                         
                         
-    def get_data_from_files(self,nvalues:int = 3):
+    def get_data_from_files(self,nvalues:int = 3) -> list[NumericalInstance]:
         heap = PriorityQueue(nvalues+1)
         i = 0
         for txt_file in os.listdir(process_folder):
