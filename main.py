@@ -1,10 +1,12 @@
 from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import JSONResponse
 from datetime import datetime
-from src.NumericalData import NumericalStructure
-
+from dataStuctures.NumericalData import NumericalStructure
+from fastapi.encoders import jsonable_encoder
 app = FastAPI()
-default_data_treatment = NumericalStructure(global_instance=True)
+
+default_file = './defaultDb.txt'
+default_data_treatment = NumericalStructure(True,default_file)
 
 
 @app.get("/health")
@@ -30,4 +32,4 @@ async def upload_file(file: UploadFile = File(...)) -> JSONResponse:
 async def upload_and_treat_file(file: UploadFile, nResponses: int = 1000) -> JSONResponse:
     analysis = NumericalStructure()
     values = analysis.get_Data(nResponses,file)
-    return JSONResponse(content={"values": [str(x) for x in values]})
+    return JSONResponse(content={"values": values})
