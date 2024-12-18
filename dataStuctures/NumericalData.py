@@ -37,7 +37,7 @@ class NumericalStructure:
         if not file_path is None:
             file = open(file_path, "r")
             size = os.path.getsize(file_path)
-            self.data = self._process_data(file,size)
+            self._process_data(file,size)
     
     def database_has_loaded(self) -> bool:
         return len(self.data) > 0 or self.chunkData

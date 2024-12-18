@@ -23,7 +23,7 @@ def getValues(nValues: int) -> JSONResponse:
 
 
 
-@app.post("/replaceDataset/")
+@app.post("/replaceDataset")
 async def upload_file(file: UploadFile ) -> JSONResponse:
     if not default_data_treatment.database_has_loaded():
         return {"message" :"The database is currently being reindexed. Please try again in a few seconds"}
