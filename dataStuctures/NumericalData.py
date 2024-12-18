@@ -5,6 +5,7 @@ import io
 import json
 from queue import PriorityQueue
 import functools
+from pathlib import Path
 
 chunk_file_size = 100000
 process_folder = './__processFiles__'
@@ -28,11 +29,6 @@ class NumericalInstance:
     def to_json(self) -> str:
         return json.dumps({"key":self.key,"value":self.value})
 
-class NumericalInstanceReverseOrder(NumericalInstance):
-    def __lt__(self, other) -> bool:
-        return self.value > other.value
-
-
 class NumericalStructure:
     def __init__(self,global_instance:bool=False,file_path:str=None):
         self.global_instance = global_instance
@@ -44,20 +40,20 @@ class NumericalStructure:
             self.data = self._process_data(file,size)
     
     def database_has_loaded(self) -> bool:
-        return len(self.data) > 0
+        return len(self.data) > 0 or self.chunkData
 
     def process_data(self,file:UploadFile=None) -> None:
         if file:
             with file.file as f:
                 fileReader = io.TextIOWrapper(f, encoding='utf-8')
-                self._process_data(fileReader,f.size)
+                self._process_data(fileReader,file.size)
 
     def _process_data(self,file: io.TextIOWrapper = None,fileSize:bytes = 0) -> None:
         if fileSize < chunk_file_size:
             self.process_entire_file(-1,file)
             self.chunkData = False
         else:
-            self.process_data_per_chunk(file)
+            self.process_data_per_chunk(file,fileSize)
             self.chunkData = True
 
     def get_Data(self,n_values:int = 3,file:UploadFile=None) -> list[NumericalInstance]:
@@ -79,33 +75,36 @@ class NumericalStructure:
         self.data = heap
         return heapq.nlargest(n_values, heap) if n_values != -1 else heap
 
-    def process_data_per_chunk(self:int,file:io.TextIOWrapper = None) -> None:
+    def process_data_per_chunk(self:int,file:io.TextIOWrapper = None,size:bytes=0) -> None:
+        Path(process_folder).mkdir(parents=True, exist_ok=True)
+        fileWrites = [open(f"{process_folder}/{i}.txt",'w') for i in range(10)]
+
         for line in file :
-            hashed_key = int(line.split('_')[0])  // 10000
-            with open(f"{process_folder}/{hashed_key}.txt",'a') as f:
-                f.write(line)
+            hashed_key = int(line.split('_')[0])  % 10
+            fileWrites[hashed_key].write(line)
+        (f.close() for f in fileWrites)
         for txt_file in os.listdir(process_folder):
             if txt_file.endswith('.txt'):
                 allData = []
                 with open(os.path.join(process_folder, txt_file), 'r') as f:
                     allData = [NumericalInstance(*line.split('_')) for line in f.readlines()]
-                    allData.sort(key=lambda x: x.value)
+                    allData.sort(reverse=True,key=lambda x: x.value)
                 with open(os.path.join(process_folder, txt_file), 'w') as f:
                     for data in allData:
                         f.write(f'{data.key}_{data.value}\n')
                         
                         
-    def get_data_from_files(self,nvalues:int = 3) -> list[NumericalInstance]:
-        heap = PriorityQueue(nvalues+1)
-        i = 0
+    def get_data_from_files(self,n_values:int = 3) -> list[NumericalInstance]:
+        heap = []
         for txt_file in os.listdir(process_folder):
             if txt_file.endswith('.txt'):
                 with open(os.path.join(process_folder, txt_file), 'r') as f:
-                    for i in range(nvalues):
+                    for i in range(n_values):
                         line = f.readline() 
                         if len(line.strip()) < 1:
                             continue
-                        heap.put(NumericalInstanceReverseOrder(*line.split('_')))
-        return heap.queue[:-1]
+                        heapq.heappush(heap,NumericalInstance(*line.split('_'))) if (i <= n_values or n_values == -1) else heapq.heapreplace(heap,NumericalInstance(*line.split('_')))
+
+        return heapq.nlargest(n_values, heap) if n_values != -1 else heap
                 
                 

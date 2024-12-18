@@ -16,14 +16,17 @@ def check_server_health() -> JSONResponse:
 
 @app.get("/getValues/{nValues}")
 def getValues(nValues: int) -> JSONResponse:
+    if not default_data_treatment.database_has_loaded():
+        return {"message" :"The database is currently being reindexed. Please try again in a few seconds"}
     values = default_data_treatment.get_Data(nValues)
     return JSONResponse(content={"values": values})
 
 
 
 @app.post("/replaceDataset/")
-async def upload_file(file: UploadFile = File(...)) -> JSONResponse:
-    contents = await file.read()
+async def upload_file(file: UploadFile ) -> JSONResponse:
+    if not default_data_treatment.database_has_loaded():
+        return {"message" :"The database is currently being reindexed. Please try again in a few seconds"}
     default_data_treatment.process_data(file)
     return {"message": "Dataset uploaded successfully. The server is currently treating the dataset..."}
 
