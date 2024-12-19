@@ -2,12 +2,11 @@ import os
 import heapq
 from fastapi import UploadFile
 import io
-import json
 import functools
 from pathlib import Path
 import yaml
 
-config = yaml.safe_load(open('config.yaml')) 
+config = yaml.safe_load(open('config.yaml'))
 
 
 class NumericalInstance:
@@ -106,12 +105,14 @@ class NumericalStructure:
         for txt_file in os.listdir(config['process_folder']):
             if txt_file.endswith('.txt'):
                 allData = []
-                with open(os.path.join(config['process_folder'], txt_file), 'r') as f:
+                with open(os.path.join(config['process_folder'],
+                          txt_file), 'r') as f:
                     allData = [
                         NumericalInstance(*line.split('_'))
                         for line in f.readlines()
                     ]
-                    allData.sort(reverse=True, key=lambda x: x.value)
+                    allData.sort(reverse=True,
+                                 key=lambda x: x.value)
                 with open(os.path.join(config['process_folder'], txt_file), 'w') as f:
                     for data in allData:
                         f.write(f'{data.key}_{data.value}\n')
