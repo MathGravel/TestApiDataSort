@@ -3,7 +3,6 @@ from datetime import datetime
 import random
 
 template_test_name = "test_n{}_date_{}.txt"
-limits = [100, 1000, 10000]
 
 
 def generator(nInstances, bitsId, bitsValue, rng):

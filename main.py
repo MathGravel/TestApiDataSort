@@ -1,9 +1,9 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
-from fastapi import  Request, Response
+from fastapi import Request, Response
 from typing import Awaitable, Callable
 from fastapi.responses import JSONResponse
 from datetime import datetime
-from dataStuctures.NumericalData import NumericalStructure
+from src.numericalData import NumericalStructure
 from pyinstrument import Profiler
 import yaml
 
@@ -85,12 +85,11 @@ async def upload_and_treat_file(file: UploadFile = File(...),
 
 if config['PROFILER']:
     @app.middleware('http')
-    async def individualProfiler(request : Request,
-                                call_next : Callable[[Request], Awaitable[Response]]) -> None:
-        prof = Profiler(async_mode ='enabled')
+    async def profileCode(request: Request,
+                          call_next: Callable[[Request], Awaitable[Response]]) -> None:
+        prof = Profiler(async_mode='enabled')
         prof.start()
         result = await call_next(request)
         prof.stop()
         prof.print()
         return result
-        

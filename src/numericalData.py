@@ -5,9 +5,9 @@ import io
 import json
 import functools
 from pathlib import Path
+import yaml
 
-chunk_file_size = 100000
-process_folder = './__processFiles__'
+config = yaml.safe_load(open('config.yaml')) 
 
 
 class NumericalInstance:
@@ -27,9 +27,6 @@ class NumericalInstance:
 
     def __repr__(self) -> str:
         return f"Key: {self.key}, Value: {self.value}"
-
-    def to_json(self) -> str:
-        return json.dumps({"key": self.key, "value": self.value})
 
 
 class NumericalStructure:
@@ -56,7 +53,7 @@ class NumericalStructure:
     def _process_data(self,
                       file: io.TextIOWrapper = None,
                       fileSize: bytes = 0) -> None:
-        if fileSize < chunk_file_size:
+        if fileSize < config['chunk_file_size']:
             self.process_entire_file(-1, file)
             self.chunkData = False
         else:
@@ -83,7 +80,8 @@ class NumericalStructure:
         heap = []
         i = 0
         if n_values == -1:
-            heap = [NumericalInstance(*line.split('_')) for line in file.readlines()]
+            heap = [NumericalInstance(*line.split('_'))
+                    for line in file.readlines()]
             heapq.heapify(heap)
         else:
             for line in file:
@@ -97,32 +95,32 @@ class NumericalStructure:
     def process_data_per_chunk(self: int,
                                file: io.TextIOWrapper = None,
                                size: bytes = 0) -> None:
-        Path(process_folder).mkdir(parents=True, exist_ok=True)
-        fileWrites = [open(f"{process_folder}/{i}.txt", 'w')
+        Path(config['process_folder']).mkdir(parents=True, exist_ok=True)
+        fileWrites = [open(f"{config['process_folder']}/{i}.txt", 'w')
                       for i in range(10)]
 
         for line in file:
             hashed_key = int(line.split('_')[0]) % 10
             fileWrites[hashed_key].write(line)
         (f.close() for f in fileWrites)
-        for txt_file in os.listdir(process_folder):
+        for txt_file in os.listdir(config['process_folder']):
             if txt_file.endswith('.txt'):
                 allData = []
-                with open(os.path.join(process_folder, txt_file), 'r') as f:
+                with open(os.path.join(config['process_folder'], txt_file), 'r') as f:
                     allData = [
                         NumericalInstance(*line.split('_'))
                         for line in f.readlines()
                     ]
                     allData.sort(reverse=True, key=lambda x: x.value)
-                with open(os.path.join(process_folder, txt_file), 'w') as f:
+                with open(os.path.join(config['process_folder'], txt_file), 'w') as f:
                     for data in allData:
                         f.write(f'{data.key}_{data.value}\n')
 
     def data_from_files(self, n_values: int = 3) -> list[NumericalInstance]:
         heap = []
-        for txt_file in os.listdir(process_folder):
+        for txt_file in os.listdir(config['process_folder']):
             if txt_file.endswith('.txt'):
-                with open(os.path.join(process_folder, txt_file), 'r') as f:
+                with open(os.path.join(config['process_folder'], txt_file), 'r') as f:
                     for i in range(n_values):
                         line = f.readline()
                         if len(line.strip()) < 1:

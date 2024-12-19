@@ -1,2 +1,4 @@
 default_file: './defaultDb.txt'
 PROFILER: False
+chunk_file_size: 100000
+process_folder: './__processFiles__'
