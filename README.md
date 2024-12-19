@@ -135,7 +135,7 @@ Individual profiling calls for inner functions were chosen to be left out of the
      The second function, process_data_per_chunk(...), create C sub-files (with C bounded to 10), and iterate on the dataset file on O(n) to stock each key_value pair into an individual sub-files, based on their hash, before sorting them. Since n is split to each instance of C, the calculation is brought back to taking O(n) space, and the conventional python list sort is considered to run in O(n) space.
      Since each branch takes O(n) space, each call to the function will run on O(n) space.
 - POST https:localhost:8000/**uploadAndTreatFile/{nResponses}**
-    The route is done in O(m), with n being the number of elements in the dataset, and m being the size of *nResponses*.
+    The route is done in O(m), with m being the size of *nResponses*.
 
     Detailed explanation :
     The call receives the request and does request parameters validation, which are considered O(1). The program then create a new NumericalStructure class and then call *analysis.get_Data(...)* and process_entire_file(...) .
