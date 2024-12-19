@@ -11,24 +11,27 @@
 
 # Installation
 
+Please take note that the project supports Python 3.11+
 
-   To install TestAPIDataSort on an Unix machine (Please note that the script should be modicied on MacOsx and Windows machine to modify the Anaconda library executable.):
+
+To install TestAPIDataSort on an Unix machine (Please note that the script should be modicied on MacOsx and Windows machine to modify the Anaconda library executable.):
     
-    ```bash
-    $ chmod +x installer.sh
-    $ sh installer.sh
-    ```
-
-The installer shell script will install Anaconda to your machien and create a ready to use
-    environnement for TestAPIDataSort.
-
-If you wish to use the project without an Anaconda environement:
 
     ```bash
     $ pip install -r requirements.txt
     ```
 
-Please take note that the project supports Python 3.11+
+If you do not have Python 3.11+ installed, the project contains an shell script made to install Anaconda and an instance of Python 3.11 on your local machine (Unix only, the path to Anaconda must be modified on Windows and MacOS machines.)
+
+
+    ```bash
+    $ chmod +x installer.sh
+    $ sh installer.sh
+    ```
+
+The installer shell script will install Anaconda to your machine and create a ready to use
+    environnement for TestAPIDataSort.
+
 
 # Usage
 
