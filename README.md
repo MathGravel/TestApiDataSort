@@ -142,4 +142,3 @@ Individual profiling calls for inner functions were chosen to be left out of the
 # Future works
 - Modify NumericalData getter functions to add more memoization caching.
 - Add unit testing to NumericalStructure functions.
-- Move the PROFILER and defaultDb global variables to an external Settings file, outside of the codebase.
