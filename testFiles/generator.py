@@ -28,8 +28,8 @@ if __name__ == "__main__":
             "Usage: python generator.py <nInstances> <BytesId> <BytesValue> \n For more info, see README.md"
         )
         sys.exit(1)
-    if not (sys.argv[1].isdigit() and sys.argv[2].isdigit()
-            and sys.argv[3].isdigit()):
+    if not (sys.argv[1].isdigit() and sys.argv[2].isdigit() and
+            sys.argv[3].isdigit()):
         print("nInstances must be an integer")
         sys.exit(1)
     rng = random.Random()

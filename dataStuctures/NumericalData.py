@@ -94,9 +94,7 @@ class NumericalStructure:
                                file: io.TextIOWrapper = None,
                                size: bytes = 0) -> None:
         Path(process_folder).mkdir(parents=True, exist_ok=True)
-        fileWrites = [
-            open(f"{process_folder}/{i}.txt", 'w') for i in range(10)
-        ]
+        fileWrites = [open(f"{process_folder}/{i}.txt", 'w') for i in range(10)]
 
         for line in file:
             hashed_key = int(line.split('_')[0]) % 10
@@ -115,8 +113,7 @@ class NumericalStructure:
                     for data in allData:
                         f.write(f'{data.key}_{data.value}\n')
 
-    def get_data_from_files(self,
-                            n_values: int = 3) -> list[NumericalInstance]:
+    def get_data_from_files(self, n_values: int = 3) -> list[NumericalInstance]:
         heap = []
         for txt_file in os.listdir(process_folder):
             if txt_file.endswith('.txt'):
@@ -127,8 +124,8 @@ class NumericalStructure:
                             continue
                         heapq.heappush(heap, NumericalInstance(
                             *line.split('_'))) if (
-                                i <= n_values
-                                or n_values == -1) else heapq.heapreplace(
+                                i <= n_values or
+                                n_values == -1) else heapq.heapreplace(
                                     heap, NumericalInstance(*line.split('_')))
 
         return heapq.nlargest(n_values, heap) if n_values != -1 else heap
