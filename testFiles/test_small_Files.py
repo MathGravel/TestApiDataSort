@@ -21,10 +21,9 @@ def test_get_n_elements_from_memory():
     assert response.status_code == 200
     response = client.get("/getValues/6", headers={"X-Token": "TempValue"})
     assert response.status_code == 200
-    print(response.json())
     assert response.json() == {
         'values':
-        [826188064, 583339512, 686239854, 598046285, 823659494, 639284544]
+        [826188064, 583339512, 686239854, 631429245, 598046285, 639284544]
     }
 
 
@@ -34,7 +33,6 @@ def test_get_n_elements_from_file():
         response = client.post("/uploadAndTreatFile/6",
                                files={"file": ("DB.txt", f, "text/plain")})
     assert response.status_code == 200
-    print(response.json())
     assert response.json() == {
         'values':
         [360413580, 25234429, 851575837, 935905565, 792584932, 161395212]

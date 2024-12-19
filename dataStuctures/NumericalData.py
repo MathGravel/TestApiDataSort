@@ -82,11 +82,15 @@ class NumericalStructure:
             file: io.TextIOWrapper = None) -> list[NumericalInstance]:
         heap = []
         i = 0
-        for line in file:
-            heapq.heappush(heap, NumericalInstance(*line.split('_'))) if (
-                i <= n_values or n_values == -1) else heapq.heapreplace(
-                    heap, NumericalInstance(*line.split('_')))
-            i += 1
+        if n_values == -1:
+            heap = [NumericalInstance(*line.split('_')) for line in file.readlines()]
+            heapq.heapify(heap)
+        else:
+            for line in file:
+                heapq.heappush(heap, NumericalInstance(*line.split('_'))) if (
+                    i <= n_values) else heapq.heapreplace(
+                        heap, NumericalInstance(*line.split('_')))
+                i += 1
         self.data = heap
         return heapq.nlargest(n_values, heap) if n_values != -1 else heap
 

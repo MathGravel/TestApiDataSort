@@ -1,12 +1,17 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import  Request, Response
+from typing import Awaitable, Callable
 from fastapi.responses import JSONResponse
 from datetime import datetime
 from dataStuctures.NumericalData import NumericalStructure
+from pyinstrument import Profiler
+import yaml
 
 app = FastAPI()
 
-default_file = './defaultDb.txt'
-default_data_treatment = NumericalStructure(True, default_file)
+config = yaml.safe_load(open('config.yaml'))
+
+default_data_treatment = NumericalStructure(True, config['default_file'])
 
 
 @app.get("/health")
@@ -25,6 +30,12 @@ def getValues(nValues: int) -> JSONResponse:
             423,
             detail="Error : The database is currently being reindexed."
             " Please try again in a few seconds."
+        )
+    if nValues is None or nValues < 1:
+        raise HTTPException(
+            423,
+            detail="Error : You must give a positive value"
+            " for the request parameter."
         )
 
     values = default_data_treatment.get_Data(nValues)
@@ -71,3 +82,15 @@ async def upload_and_treat_file(file: UploadFile = File(...),
     analysis = NumericalStructure()
     values = analysis.get_Data(nResponses, file)
     return JSONResponse(content={"values": values})
+
+if config['PROFILER']:
+    @app.middleware('http')
+    async def individualProfiler(request : Request,
+                                call_next : Callable[[Request], Awaitable[Response]]) -> None:
+        prof = Profiler(async_mode ='enabled')
+        prof.start()
+        result = await call_next(request)
+        prof.stop()
+        prof.print()
+        return result
+        
