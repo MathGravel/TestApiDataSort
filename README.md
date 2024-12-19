@@ -12,34 +12,34 @@
 # Installation
 
 
-    To install TestAPIDataSort on an Unix machine (Please note that the script should be modicied on MacOsx and Windows machine to modify the Anaconda library executable.):
+   To install TestAPIDataSort on an Unix machine (Please note that the script should be modicied on MacOsx and Windows machine to modify the Anaconda library executable.):
     
     ```bash
     $ chmod +x installer.sh
     $ sh installer.sh
     ```
 
-    The installer shell script will install Anaconda to your machien and create a ready to use
+The installer shell script will install Anaconda to your machien and create a ready to use
     environnement for TestAPIDataSort.
 
-    If you wish to use the project without an Anaconda environement:
+If you wish to use the project without an Anaconda environement:
 
     ```bash
     $ pip install -r requirements.txt
     ```
 
-    Please take note that the project supports Python 3.11+
+Please take note that the project supports Python 3.11+
 
 # Usage
 
-    (Please note that the usage shown here is for a local deployment. For deployment on Google cloud,
+(Please note that the usage shown here is for a local deployment. For deployment on Google cloud,
     please check their [`documentation`](https://cloud.google.com/sdk/gcloud/reference/app/deploy) for more details.)
 
     ```bash
     $ fastapi run 
     ```
 
-    The project loads a default database on startup, and its API can be contacted at the following routes:
+The project loads a default database on startup, and its API can be contacted at the following routes:
 - GET https:localhost:8000/**health**
     Simple route to confirm the app is correctly running.
 - GET https:localhost:8000/**getValues/{nValues}**
@@ -73,7 +73,7 @@ New test files can be generated using the **generator.py** module in the testFil
         BytesId             The number of bytes used for the length of the random Id generation.
         BytesValue          The number of bytes used for the length of the random Value generation.
     ```
-generator.py will save the test file generated as *test_n<nInstances>_date_<current datetime>.txt*
+generator.py will save the test file generated as *test_(nInstances)_date_(current datetime).txt*
 
 # Profiling
 
@@ -84,7 +84,7 @@ The project calls can be profiled using the **pyInstrument** library
     $ pyinstrument -m pytest 
     ```
 
-Individual profiling calls for inner functions were chosen to be left out of the codebase at this stage of the project lifecycle, in order to keep the structure easy to read. An example of function profiling can be found as an extras in main.py by swapping the PROFILER global variable to True, which start a profiler at the level of each route.
+Individual profiling calls for inner functions were chosen to be left out of the codebase at this stage of the project lifecycle, in order to keep the structure easy to read. An example of function profiling can be found as an extras in main.py by swapping the PROFILER global variable to True in **config.yaml**, which start a profiler at the level of each route.
 
 # Project complexity
 
