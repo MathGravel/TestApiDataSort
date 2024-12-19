@@ -1,4 +1,3 @@
-import pytest
 from main import app
 from fastapi.testclient import TestClient
 
@@ -7,7 +6,7 @@ client = TestClient(app)
 
 def test_replace_database():
     with open(
-            './testFiles/data/100k-1000k/test_n1000000_date_20241218120251.txt',
+            'testFiles/data/100k-1000k/test_n1000000_date_20241218120251.txt',
             'rb') as f:
         response = client.post("/replaceDataset",
                                files={"file": ("DB.txt", f, "text/plain")})
@@ -17,7 +16,7 @@ def test_replace_database():
 def test_get_n_elements_from_memory():
 
     with open(
-            './testFiles/data/100k-1000k/test_n1000000_date_20241218120251.txt',
+            'testFiles/data/100k-1000k/test_n1000000_date_20241218120251.txt',
             'rb') as f:
         response = client.post("/replaceDataset",
                                files={"file": ("DB.txt", f, "text/plain")})
@@ -33,7 +32,7 @@ def test_get_n_elements_from_memory():
 
 def test_get_n_elements_from_file():
     with open(
-            './testFiles/data/100k-1000k/test_n1000000_date_20241218182854.txt',
+            'testFiles/data/100k-1000k/test_n1000000_date_20241218182854.txt',
             'rb') as f:
         response = client.post("/uploadAndTreatFile/6",
                                files={"file": ("DB.txt", f, "text/plain")})

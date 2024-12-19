@@ -1,8 +1,7 @@
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse
 from datetime import datetime
 from dataStuctures.NumericalData import NumericalStructure
-from fastapi.encoders import jsonable_encoder
 
 app = FastAPI()
 
@@ -22,31 +21,53 @@ def check_server_health() -> JSONResponse:
 @app.get("/getValues/{nValues}")
 def getValues(nValues: int) -> JSONResponse:
     if not default_data_treatment.database_has_loaded():
-        return {
-            "message":
-                "The database is currently being reindexed. Please try again in a few seconds"
-        }
+        raise HTTPException(
+            423,
+            detail="Error : The database is currently being reindexed."
+            " Please try again in a few seconds."
+        )
+
     values = default_data_treatment.get_Data(nValues)
     return JSONResponse(content={"values": values})
 
 
 @app.post("/replaceDataset")
-async def upload_file(file: UploadFile) -> JSONResponse:
+async def upload_file(file: UploadFile = File(...)) -> JSONResponse:
+
+    if file is None:
+        raise HTTPException(
+            400,
+            detail="Error : This route must receive a text document to run.")
+    if file.content_type != "text/plain":
+        raise HTTPException(
+            400, detail="Error : The document type must be a plain text file.")
+
     if not default_data_treatment.database_has_loaded():
-        return {
-            "message":
-                "The database is currently being reindexed. Please try again in a few seconds"
-        }
+        raise HTTPException(
+            423,
+            detail="Error : The database is currently being reindexed."
+            " Please try again in a few seconds."
+        )
+
     default_data_treatment.process_data(file)
     return {
         "message":
-            "Dataset uploaded successfully. The server is currently treating the dataset..."
+            "Dataset uploaded successfully."
+            " The server is currently treating the dataset..."
     }
 
 
 @app.post("/uploadAndTreatFile/{nResponses}")
-async def upload_and_treat_file(file: UploadFile,
+async def upload_and_treat_file(file: UploadFile = File(...),
                                 nResponses: int = 1000) -> JSONResponse:
+    if file is None:
+        raise HTTPException(
+            400,
+            detail="Error : This route must receive a text document to run.")
+    if file.content_type != "text/plain":
+        raise HTTPException(
+            400, detail="Error : The document type must be a plain text file.")
+
     analysis = NumericalStructure()
     values = analysis.get_Data(nResponses, file)
     return JSONResponse(content={"values": values})

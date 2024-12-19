@@ -15,6 +15,9 @@
 
 ## Temporal complexity
 
+# Future works
+- Modify NumericalData getter functions to add more memoization caching.
+
 # TODO
 
 - Écrire le README.md, et inclure les explications pour démarrer, partir pyinstrument et pytest, et générer des tests additionnels.

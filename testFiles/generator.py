@@ -25,7 +25,8 @@ def generate_test_file(nInstances, bitsId, bitsValue, rng):
 if __name__ == "__main__":
     if len(sys.argv) < 4:
         print(
-            "Usage: python generator.py <nInstances> <BytesId> <BytesValue> \n For more info, see README.md"
+            "Usage: python generator.py <nInstances> <BytesId> <BytesValue> \n"
+            " For more info, see README.md"
         )
         sys.exit(1)
     if not (sys.argv[1].isdigit() and sys.argv[2].isdigit() and

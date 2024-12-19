@@ -1,4 +1,3 @@
-import pytest
 from main import app
 from fastapi.testclient import TestClient
 
@@ -40,6 +39,14 @@ def test_get_n_elements_from_file():
         'values':
         [360413580, 25234429, 851575837, 935905565, 792584932, 161395212]
     }
+
+
+def test_send_wrong_format_file():
+    with open('./testFiles/wrongInput.png',
+              'rb') as f:
+        response = client.post("/uploadAndTreatFile/6",
+                               files={"file": ("DB.jpeg", f, "image/png")})
+    assert response.status_code == 400
 
 
 def test_check_server_health():

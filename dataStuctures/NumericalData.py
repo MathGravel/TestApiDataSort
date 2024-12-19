@@ -1,9 +1,8 @@
 import os
 import heapq
-from fastapi import UploadFile, File
+from fastapi import UploadFile
 import io
 import json
-from queue import PriorityQueue
 import functools
 from pathlib import Path
 
@@ -39,7 +38,7 @@ class NumericalStructure:
         self.global_instance = global_instance
         self.data = []
         self.chunkData = False
-        if not file_path is None:
+        if file_path is not None:
             file = open(file_path, "r")
             size = os.path.getsize(file_path)
             self._process_data(file, size)
@@ -47,6 +46,7 @@ class NumericalStructure:
     def database_has_loaded(self) -> bool:
         return len(self.data) > 0 or self.chunkData
 
+    @functools.cache
     def process_data(self, file: UploadFile = None) -> None:
         if file:
             with file.file as f:
@@ -72,7 +72,7 @@ class NumericalStructure:
                 x.key for x in self.process_entire_file(n_values, fileReader)
             ]
         elif self.chunkData:
-            return [x.key for x in self.get_data_from_files(n_values)]
+            return [x.key for x in self.data_from_files(n_values)]
         else:
             return [x.key for x in self.data[:n_values]]
 
@@ -94,7 +94,8 @@ class NumericalStructure:
                                file: io.TextIOWrapper = None,
                                size: bytes = 0) -> None:
         Path(process_folder).mkdir(parents=True, exist_ok=True)
-        fileWrites = [open(f"{process_folder}/{i}.txt", 'w') for i in range(10)]
+        fileWrites = [open(f"{process_folder}/{i}.txt", 'w')
+                      for i in range(10)]
 
         for line in file:
             hashed_key = int(line.split('_')[0]) % 10
@@ -113,7 +114,7 @@ class NumericalStructure:
                     for data in allData:
                         f.write(f'{data.key}_{data.value}\n')
 
-    def get_data_from_files(self, n_values: int = 3) -> list[NumericalInstance]:
+    def data_from_files(self, n_values: int = 3) -> list[NumericalInstance]:
         heap = []
         for txt_file in os.listdir(process_folder):
             if txt_file.endswith('.txt'):
